@@ -36,7 +36,7 @@ window.renderStatistics = function (ctx, names, times) {
 
 
   // for (var i = 0; i < times.length; i++) {
-    ctx.fillStyle = 'black';
+    // ctx.fillStyle = 'black';
     if (names[i] !== 'Вы') {
       // var alpha = Math.random();
       // ctx.globalAlpha = alpha.toFixed(2);
