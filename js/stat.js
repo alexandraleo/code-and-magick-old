@@ -1,60 +1,71 @@
 'use strict';
 
 window.renderStatistics = function (ctx, names, times) {
+  var positionX = 100;
+  var positionY = 10;
+  var blockOffset = 10;
+  var blockWidth = 420;
+  var blockHeight = 270;
+  var textMarginLeft = 120;
+
   ctx.strokeStyle = 'rgba(0, 0, 0, 0.7)';
   ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-  ctx.strokeRect(110, 20, 420, 270);
-  ctx.fillRect(110, 20, 420, 270);
+  ctx.strokeRect(positionX + blockOffset, positionY + blockOffset, blockWidth, blockHeight);
+  ctx.fillRect(positionX + blockOffset, positionY + blockOffset, blockWidth, blockHeight);
 
   ctx.fillStyle = 'white';
-  ctx.strokeRect(100, 10, 420, 270);
-  ctx.fillRect(100, 10, 420, 270);
+  ctx.strokeRect(positionX, positionY, blockWidth, blockHeight);
+  ctx.fillRect(positionX, positionY, blockWidth, blockHeight);
 
   ctx.fillStyle = 'black';
   ctx.font = '16px PT Mono';
-  ctx.fillText('Ура, вы победили!', 120, 40);
-  ctx.fillText('Список результатов:', 120, 70);
+  ctx.fillText('Ура, вы победили!', textMarginLeft, 40);
+  ctx.fillText('Список результатов:', textMarginLeft, 70);
 
   var max = -1;
-  // var maxIndex = -1;
+  var percent = 1;
 
   for (var i = 0; i < times.length; i++) {
-    var time = times[i];
-    if (time > max) {
-      max = time;
-      // maxIndex = i;
-    }
-  // }
-    var histogramHeight = 150;
-    var histogramWidth = 40;
-    var indent = 50;
-    var initialX = 120;
-    var initialY = 250;
-    var step = histogramHeight / max; // Разница??;
-    // console.log(names);
-    // console.log(names.indexOf('Вы'));
+    times.sort(compareNumeric);
+    max = times[times.length - 1];
+    percent = times[i] / max;
 
-
-  // for (var i = 0; i < times.length; i++) {
-    // ctx.fillStyle = 'black';
+    var histogram = {
+      height: 150,
+      width: 40,
+      indent: 50,
+      initialX: 120,
+      initialY: 250
+    };
     if (names[i] !== 'Вы') {
-      // var alpha = Math.random();
-      // ctx.globalAlpha = alpha.toFixed(2);
       var alpha = Math.random();
-      // console.log(alpha);
       ctx.fillStyle = 'rgba(0, 0, 255,' + alpha + ')';
     } else {
-      // ctx.globalAlpha = 1;
       ctx.fillStyle = 'rgba(255, 0, 0, 1)';
     }
-    ctx.fillRect(initialX + (indent + histogramWidth) * i, initialY - times[i] * step, histogramWidth, times[i] * step);
+
+    ctx.fillRect(getBarX(), getBarY(), histogram.width, percent * histogram.height);
 
     ctx.textBaseline = 'top';
     ctx.fillStyle = 'black';
-    // Про время;
-    ctx.fillText(Math.floor(times[i]), initialX + (indent + histogramWidth) * i, initialY - 1 * times[i] * step - indent / 3);
-    // Про имена;
-    ctx.fillText(names[i], initialX + (indent + histogramWidth) * i, initialY + indent / 10);
 
+    ctx.fillText(Math.floor(times[i]), getBarX(), getBarY() - histogram.indent / 3);  // Про время;
+    ctx.fillText(names[i], getBarX(), histogram.initialY + histogram.indent / 10);  // Про имена;
+  }
+
+  function compareNumeric(a, b) {
+    if (a > b) {
+      return 1;
+    }
+    if (a < b) {
+      return -1;
+    }
+    return 1;
+  }
+  function getBarX() {
+    return histogram.initialX + (histogram.indent + histogram.width) * i;
+  }
+  function getBarY() {
+    return histogram.initialY - percent * histogram.height;
   }
 };
